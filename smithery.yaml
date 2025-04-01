@@ -37,3 +37,5 @@ healthcheck:
   period_seconds: 30
   timeout_seconds: 5
   failure_threshold: 3
+
+type: http_server
