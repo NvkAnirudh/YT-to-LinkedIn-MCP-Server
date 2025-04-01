@@ -1,0 +1,50 @@
+[build-system]
+requires = ["setuptools>=42", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "yt-to-linkedin-mcp"
+version = "0.1.0"
+description = "Model Context Protocol server that automates generating LinkedIn post drafts from YouTube videos"
+readme = "README.md"
+authors = [
+    {name = "Anirudh Nuti", email = "your-email@example.com"}
+]
+license = {text = "MIT"}
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+]
+requires-python = ">=3.9"
+dependencies = [
+    "fastapi>=0.95.0",
+    "uvicorn>=0.21.1",
+    "openai>=0.27.0",
+    "youtube-transcript-api>=0.6.0",
+    "httpx>=0.24.0",
+    "typer>=0.9.0",
+    "mcp>=0.1.0",
+    "pydantic>=2.0.0",
+]
+
+[project.scripts]
+yt-to-linkedin-mcp = "yt_to_linkedin_mcp:app"
+
+[tool.black]
+line-length = 100
+target-version = ["py39"]
+
+[tool.isort]
+profile = "black"
+line_length = 100
+
+[tool.ruff]
+line-length = 100
+target-version = "py39"
+select = ["E", "F", "B", "I"]
+ignore = []
