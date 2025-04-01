@@ -39,6 +39,62 @@ app.include_router(summary.router, prefix="/api/v1", tags=["Summary"])
 app.include_router(post_generation.router, prefix="/api/v1", tags=["Post Generation"])
 app.include_router(output.router, prefix="/api/v1", tags=["Output"])
 
+# Tool listing endpoint for Smithery
+@app.get("/list-tools")
+async def list_tools():
+    """
+    List available tools for Smithery integration.
+    This endpoint does not require authentication.
+    """
+    return {
+        "tools": [
+            {
+                "name": "extract_transcript",
+                "description": "Extract transcript from a YouTube video",
+                "parameters": {
+                    "youtube_url": "URL of the YouTube video",
+                    "language": "Language code for the transcript (default: en)"
+                }
+            },
+            {
+                "name": "generate_summary",
+                "description": "Generate a summary from a video transcript",
+                "parameters": {
+                    "transcript": "Video transcript text",
+                    "video_title": "Title of the video",
+                    "tone": "Tone of the summary",
+                    "audience": "Target audience",
+                    "max_length": "Maximum summary length in words",
+                    "min_length": "Minimum summary length in words"
+                }
+            },
+            {
+                "name": "generate_post",
+                "description": "Generate a LinkedIn post from a video summary",
+                "parameters": {
+                    "summary": "Video summary",
+                    "video_title": "Title of the video",
+                    "video_url": "URL of the YouTube video",
+                    "speaker_name": "Name of the speaker in the video (optional)",
+                    "hashtags": "List of hashtags to include (optional)",
+                    "tone": "Tone of the post",
+                    "voice": "Voice of the post",
+                    "audience": "Target audience",
+                    "include_call_to_action": "Whether to include a call to action",
+                    "max_length": "Maximum post length in characters"
+                }
+            },
+            {
+                "name": "format_output",
+                "description": "Format the LinkedIn post for output",
+                "parameters": {
+                    "post_content": "LinkedIn post content",
+                    "format": "Output format (json, text, markdown, html)"
+                }
+            }
+        ]
+    }
+
 # Root endpoint
 @app.get("/")
 async def root():
