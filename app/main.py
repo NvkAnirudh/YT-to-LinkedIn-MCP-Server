@@ -1,8 +1,7 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.openapi.utils import get_openapi
 import logging
-import os
 from dotenv import load_dotenv
 
 from app.routers import transcript, summary, post_generation, output
@@ -47,49 +46,170 @@ async def list_tools():
     This endpoint does not require authentication.
     """
     return {
+        "schema_version": "v1",
+        "name_for_human": "YouTube to LinkedIn MCP Server",
+        "name_for_model": "youtube_to_linkedin",
+        "description_for_human": "Generate LinkedIn posts from YouTube videos",
+        "description_for_model": "This service extracts transcripts from YouTube videos, summarizes them, and generates LinkedIn posts.",
+        "auth": {
+            "type": "none"
+        },
+        "api": {
+            "type": "openapi",
+            "url": "/openapi.json"
+        },
         "tools": [
             {
-                "name": "extract_transcript",
-                "description": "Extract transcript from a YouTube video",
-                "parameters": {
-                    "youtube_url": "URL of the YouTube video",
-                    "language": "Language code for the transcript (default: en)"
+                "type": "function",
+                "function": {
+                    "name": "extract_transcript",
+                    "description": "Extract transcript from a YouTube video",
+                    "parameters": {
+                        "type": "object",
+                        "properties": {
+                            "youtube_url": {
+                                "type": "string",
+                                "description": "URL of the YouTube video"
+                            },
+                            "language": {
+                                "type": "string",
+                                "description": "Language code for the transcript (default: en)"
+                            },
+                            "youtube_api_key": {
+                                "type": "string",
+                                "description": "Optional YouTube Data API key"
+                            }
+                        },
+                        "required": ["youtube_url"]
+                    }
                 }
             },
             {
-                "name": "generate_summary",
-                "description": "Generate a summary from a video transcript",
-                "parameters": {
-                    "transcript": "Video transcript text",
-                    "video_title": "Title of the video",
-                    "tone": "Tone of the summary",
-                    "audience": "Target audience",
-                    "max_length": "Maximum summary length in words",
-                    "min_length": "Minimum summary length in words"
+                "type": "function",
+                "function": {
+                    "name": "generate_summary",
+                    "description": "Generate a summary from a video transcript",
+                    "parameters": {
+                        "type": "object",
+                        "properties": {
+                            "transcript": {
+                                "type": "string",
+                                "description": "Video transcript text"
+                            },
+                            "video_title": {
+                                "type": "string",
+                                "description": "Title of the video"
+                            },
+                            "tone": {
+                                "type": "string",
+                                "description": "Tone of the summary",
+                                "enum": ["educational", "inspirational", "professional", "conversational", "thought_leader"]
+                            },
+                            "audience": {
+                                "type": "string",
+                                "description": "Target audience",
+                                "enum": ["general", "technical", "executive", "entry_level", "industry_specific"]
+                            },
+                            "max_length": {
+                                "type": "integer",
+                                "description": "Maximum summary length in words"
+                            },
+                            "min_length": {
+                                "type": "integer",
+                                "description": "Minimum summary length in words"
+                            },
+                            "openai_api_key": {
+                                "type": "string",
+                                "description": "Optional OpenAI API key"
+                            }
+                        },
+                        "required": ["transcript", "video_title", "tone", "audience"]
+                    }
                 }
             },
             {
-                "name": "generate_post",
-                "description": "Generate a LinkedIn post from a video summary",
-                "parameters": {
-                    "summary": "Video summary",
-                    "video_title": "Title of the video",
-                    "video_url": "URL of the YouTube video",
-                    "speaker_name": "Name of the speaker in the video (optional)",
-                    "hashtags": "List of hashtags to include (optional)",
-                    "tone": "Tone of the post",
-                    "voice": "Voice of the post",
-                    "audience": "Target audience",
-                    "include_call_to_action": "Whether to include a call to action",
-                    "max_length": "Maximum post length in characters"
+                "type": "function",
+                "function": {
+                    "name": "generate_post",
+                    "description": "Generate a LinkedIn post from a video summary",
+                    "parameters": {
+                        "type": "object",
+                        "properties": {
+                            "summary": {
+                                "type": "string",
+                                "description": "Video summary"
+                            },
+                            "video_title": {
+                                "type": "string",
+                                "description": "Title of the video"
+                            },
+                            "video_url": {
+                                "type": "string",
+                                "description": "URL of the YouTube video"
+                            },
+                            "speaker_name": {
+                                "type": "string",
+                                "description": "Name of the speaker in the video (optional)"
+                            },
+                            "hashtags": {
+                                "type": "array",
+                                "items": {
+                                    "type": "string"
+                                },
+                                "description": "List of hashtags to include (optional)"
+                            },
+                            "tone": {
+                                "type": "string",
+                                "description": "Tone of the post",
+                                "enum": ["educational", "inspirational", "professional", "conversational", "thought_leader"]
+                            },
+                            "voice": {
+                                "type": "string",
+                                "description": "Voice of the post",
+                                "enum": ["first_person", "third_person"]
+                            },
+                            "audience": {
+                                "type": "string",
+                                "description": "Target audience",
+                                "enum": ["general", "technical", "executive", "entry_level", "industry_specific"]
+                            },
+                            "include_call_to_action": {
+                                "type": "boolean",
+                                "description": "Whether to include a call to action"
+                            },
+                            "max_length": {
+                                "type": "integer",
+                                "description": "Maximum post length in characters"
+                            },
+                            "openai_api_key": {
+                                "type": "string",
+                                "description": "Optional OpenAI API key"
+                            }
+                        },
+                        "required": ["summary", "video_title", "video_url", "tone", "voice", "audience"]
+                    }
                 }
             },
             {
-                "name": "format_output",
-                "description": "Format the LinkedIn post for output",
-                "parameters": {
-                    "post_content": "LinkedIn post content",
-                    "format": "Output format (json, text, markdown, html)"
+                "type": "function",
+                "function": {
+                    "name": "format_output",
+                    "description": "Format the LinkedIn post for output",
+                    "parameters": {
+                        "type": "object",
+                        "properties": {
+                            "post_content": {
+                                "type": "string",
+                                "description": "LinkedIn post content"
+                            },
+                            "format": {
+                                "type": "string",
+                                "description": "Output format",
+                                "enum": ["json", "text", "markdown", "html"]
+                            }
+                        },
+                        "required": ["post_content", "format"]
+                    }
                 }
             }
         ]

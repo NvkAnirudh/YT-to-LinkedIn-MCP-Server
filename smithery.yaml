@@ -36,6 +36,11 @@ startCommand:
       }
     })
 
+# Specify the MCP configuration
+mcp:
+  toolsEndpoint: "/list-tools"
+  type: "http"
+
 resources:
   cpu: 1
   memory: 1Gi
