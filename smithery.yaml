@@ -1,0 +1,39 @@
+name: yt-to-linkedin-mcp
+description: Model Context Protocol server that automates generating LinkedIn post drafts from YouTube videos
+version: 1.0.0
+tags:
+  - youtube
+  - linkedin
+  - content-generation
+  - mcp
+  - fastapi
+
+env_vars:
+  - name: OPENAI_API_KEY
+    description: OpenAI API key for summarization and post generation (optional, can be provided in requests)
+    required: false
+  - name: YOUTUBE_API_KEY
+    description: YouTube Data API key for fetching video metadata (optional, can be provided in requests)
+    required: false
+  - name: PORT
+    description: Port to run the server on
+    default: "8000"
+    required: false
+
+entrypoint: ./start.sh
+
+resources:
+  cpu: 1
+  memory: 1Gi
+
+ports:
+  - port: 8000
+    protocol: TCP
+    name: http
+
+healthcheck:
+  path: /health
+  initialDelaySeconds: 10
+  periodSeconds: 30
+  timeoutSeconds: 5
+  failureThreshold: 3
