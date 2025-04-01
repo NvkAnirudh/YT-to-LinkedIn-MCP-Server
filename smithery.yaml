@@ -8,14 +8,14 @@ tags:
   - mcp
   - fastapi
 
-env_vars:
-  - name: OPENAI_API_KEY
+env:
+  OPENAI_API_KEY:
     description: OpenAI API key for summarization and post generation (optional, can be provided in requests)
     required: false
-  - name: YOUTUBE_API_KEY
+  YOUTUBE_API_KEY:
     description: YouTube Data API key for fetching video metadata (optional, can be provided in requests)
     required: false
-  - name: PORT
+  PORT:
     description: Port to run the server on
     default: "8000"
     required: false
@@ -26,16 +26,14 @@ resources:
   cpu: 1
   memory: 1Gi
 
-# Define the ports section properly
 ports:
-  - port: 8000
+  - name: http
+    port: 8000
     protocol: TCP
-    name: http
 
-# Define the healthcheck section
 healthcheck:
   path: /health
-  initialDelaySeconds: 10
-  periodSeconds: 30
-  timeoutSeconds: 5
-  failureThreshold: 3
+  initial_delay_seconds: 10
+  period_seconds: 30
+  timeout_seconds: 5
+  failure_threshold: 3
