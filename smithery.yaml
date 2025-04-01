@@ -26,11 +26,13 @@ resources:
   cpu: 1
   memory: 1Gi
 
+# Define the ports section properly
 ports:
   - port: 8000
     protocol: TCP
     name: http
 
+# Define the healthcheck section
 healthcheck:
   path: /health
   initialDelaySeconds: 10
